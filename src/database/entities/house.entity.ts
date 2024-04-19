@@ -34,10 +34,10 @@ export class House {
   @Column({ type: 'float' })
   area: number;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.myHouses)
   owner: User;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.myHousesToSell)
   seller: User;
 
   @CreateDateColumn()

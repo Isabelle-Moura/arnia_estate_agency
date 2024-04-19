@@ -1,8 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import {
-  TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions,
-} from '@nestjs/typeorm';
+import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 // useFactory: is a function that creates custom configurations for services using injected dependencies.
@@ -12,7 +9,7 @@ export default <TypeOrmModuleAsyncOptions>{
 
   useFactory: async (
     configService: ConfigService,
-  ): Promise<TypeOrmModuleOptions> => {
+  ): Promise<PostgresConnectionOptions> => {
     return <PostgresConnectionOptions>{
       type: 'postgres', // Database type.
       host: configService.get('DB_HOST'), // Database host.

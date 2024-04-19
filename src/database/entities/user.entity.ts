@@ -5,8 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  BeforeInsert,
 } from 'typeorm';
 import { House } from './house.entity';
+import * as bcrypt from 'bcrypt';
+import { UserRole } from '../../utils/user-role.enum';
 
 @Entity()
 export class User {
@@ -16,16 +19,16 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: 'user',
+    default: UserRole.BUYER,
   })
   role: UserRole;
 
@@ -40,4 +43,13 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  async passwordHash() {
+    try {
+      this.password = await bcrypt.hash(this.password, 10);
+    } catch (error) {
+      console.log('Error on password hash.', error);
+    }
+  }
 }

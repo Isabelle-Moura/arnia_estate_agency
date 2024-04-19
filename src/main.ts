@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 // IIFE: Immediately Invoked Function Expression (a function that calls itself).
 // bootstrap(): Initializes and configures an application.
-(async () => {
+async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule); // Creates an application.
 
@@ -29,4 +29,6 @@ import { ValidationPipe } from '@nestjs/common';
   } catch (error) {
     console.log('An error occurred while running the application', error); // Logs the error.
   }
-})();
+}
+
+bootstrap();
