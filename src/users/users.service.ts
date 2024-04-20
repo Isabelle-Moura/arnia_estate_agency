@@ -1,8 +1,14 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/entities';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -10,7 +16,7 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async isEmailExists(email: string) {
+  async doesEmailExists(email: string) {
     try {
       return await this.usersRepository.exists({ where: { email } });
     } catch (error) {
@@ -20,7 +26,7 @@ export class UsersService {
 
   async register(payload: CreateUserDto) {
     try {
-      const userExists = await this.isEmailExists(payload.email);
+      const userExists = await this.doesEmailExists(payload.email);
 
       if (userExists) {
         throw new BadRequestException(
@@ -33,6 +39,56 @@ export class UsersService {
       await this.usersRepository.save(newUser);
 
       return newUser;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async getUserBy(email: string) {
+    try {
+      return this.usersRepository.findOne({
+        where: { email },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          role: true,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findAll() {
+    try {
+      return await this.usersRepository.find();
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async findOne(id: number) {
+    try {
+      const user = await this.usersRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new NotFoundException("User wasn't found.");
+      }
+
+      return user;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async update(id: number, data: UpdateUserDto) {
+    try {
+      const user = await this.findOne(id);
+
+      await this.usersRepository.update(user.id, data);
+
+      return await this.findOne(id);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }

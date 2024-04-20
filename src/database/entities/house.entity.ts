@@ -13,25 +13,25 @@ export class House {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   description: string;
 
-  @Column()
+  @Column({ nullable: false })
   city: string;
 
-  @Column()
+  @Column({ nullable: false })
   neighborhood: string;
 
-  @Column()
+  @Column({ nullable: false })
   street: string;
 
-  @Column()
+  @Column({ nullable: false })
   number: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: false })
   price: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'float', nullable: false })
   area: number;
 
   @ManyToOne(() => User, (user) => user.myHouses)
