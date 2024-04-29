@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  DeleteDateColumn,
 } from 'typeorm';
 import { User } from './index';
 
@@ -45,4 +46,7 @@ export class House {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

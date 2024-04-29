@@ -3,12 +3,15 @@ import {
   HttpException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../database/entities';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -89,6 +92,26 @@ export class UsersService {
       await this.usersRepository.update(user.id, data);
 
       return await this.findOne(id);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  async changePassword(userId: number, body: UpdatePasswordDto) {
+    try {
+      const user = await this.findOne(userId);
+
+      const comparedPassword = await bcrypt.compare(
+        user.password,
+        body.password,
+      );
+
+      if (!comparedPassword) {
+        throw new UnauthorizedException();
+      }
+
+      user.password = await bcrypt.hash(body.newPassword, 10);
+      await this.usersRepository.save(user);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
