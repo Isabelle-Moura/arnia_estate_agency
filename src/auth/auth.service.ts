@@ -28,12 +28,11 @@ export class AuthService {
   async login(payload: AuthLoginDto) {
     try {
       const user = await this.usersService.getUserBy(payload.email);
+
       const comparePasswords = await bcrypt.compare(
         user.password,
         payload.password,
       );
-      console.log('user:', user);
-      console.log('comparePasswords:', comparePasswords);
 
       if (!user || !comparePasswords) {
         throw new UnauthorizedException('E-mail or password wrong. Try again.');
