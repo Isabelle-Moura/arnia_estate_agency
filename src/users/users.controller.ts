@@ -14,21 +14,24 @@ import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { CurrentUserDto } from 'src/decorators/current-user.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UsersDoc } from '../docs/users/users.doc';
+import { CreateUserDoc, UserCreatedDoc } from '../docs';
 
-/*
-  TODO: [] Faça uma documentação pro projeto elaborado até agora.
-  TODO: [] Testar todas as rotas.
-*/
-
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @ApiBody({ type: [UsersDoc] })
+  @ApiResponse({ type: [UsersDoc] })
   @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
+  @ApiBody({ type: CreateUserDoc })
+  @ApiResponse({ type: UserCreatedDoc })
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.findOne(+id);

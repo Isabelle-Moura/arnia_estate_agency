@@ -18,7 +18,9 @@ import { UserRole } from '../utils/user-role.enum';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { CurrentUserDto } from '../decorators/current-user.dto';
 import { UpdateHouseDto } from './dto/update-house.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('houses')
 @Controller('houses')
 export class HousesController {
   constructor(private housesService: HousesService) {}
